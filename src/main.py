@@ -7,7 +7,7 @@ from exceptions.exceptions import DataSourceError, DataExtractorError
 app = FastAPI()
 
 # URLs base e cabeçalhos para os diferentes datasets
-base_url_games = "https://www.espn.com/olympics/summer/2024/results/_/date/202407"
+base_url_games = "https://www.espn.com/olympics/summer/2024/results/_/date/"
 url_records = "https://www.espn.com/olympics/summer/2024/medals"
 url_athlete_medals = "https://www.espn.com/olympics/summer/2024/medals/_/view/athletes"
 
@@ -16,17 +16,17 @@ headers = {
 }
 
 # Funções auxiliares para criar DataSource com URLs dinâmicas
-def get_data_source_games(day: str) -> DataSource:
-    url = f"{base_url_games}{day}"
+def get_data_source_games(date: str) -> DataSource:
+    url = f"{base_url_games}{date}"
     return DataSource(url, headers)
 
 data_source_records = DataSource(url_records, headers)
 data_source_athlete_medals = DataSource(url_athlete_medals, headers)
 
 @app.get("/games")
-async def get_games(day: str):
+async def get_games(date: str):
     try:
-        data_source_games = get_data_source_games(day)
+        data_source_games = get_data_source_games(date)
         html_content_games = data_source_games.fetch_html()
         games_container = data_source_games.parse_html_games(html_content_games)
         games_data = DataExtractor.extract_data_games(games_container)
